@@ -6,3 +6,6 @@ Collection of tools and scripts for looking into political malpractice, through 
 
 * requests
 * beautifulsoup4
+* alive-progress
+* Time
+* OS
