@@ -4,7 +4,12 @@ from alive_progress import alive_bar
 import requests as rq
 from bs4 import BeautifulSoup as bs
 
-cacheDir = "./Cache/"
+# TODO
+# Generates an SQL database of the UK data to be queried by data processing applications
+
+
+CWD = os.path.dirname(os.path.realpath(__file__)) + "/"
+print("Working In {}".format(CWD))
 
 def cleanup(filename):
     f = open(filename, "r")
@@ -32,10 +37,16 @@ def cleanup(filename):
 
 ## HTML Cleanup of Documents
 
-for filename in os.listdir(cacheDir):
-    if os.path.splitext(filename)[1] == '.htm':
-        cleanup(cacheDir + filename)
-    else:
-        print("Avoided File: {}".format(filename))
+# Get all cache directories
+cachedDirs = [x[0] for x in os.walk(CWD)]
+cachedDirs.remove(CWD)
 
-cleanup(cacheDir + "abbott_diane.htm")
+
+for cDir in cachedDirs:
+    for filename in os.listdir(cDir):
+        if os.path.splitext(filename)[1] == '.htm':
+            cleanup(cDir + "/" + filename)
+        else:
+            print("Avoided File: {}".format(filename))
+
+print("Job Complete")
