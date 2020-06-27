@@ -1,2 +1,3 @@
-Cache/
 keys.txt
+.vscode/**
+.pytest_cache/**
