@@ -1,2 +1,2 @@
 # Ignore the contents of any generated Cache sets
-Cache*/**
+/Register*/**

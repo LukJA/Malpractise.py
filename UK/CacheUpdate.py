@@ -4,8 +4,16 @@ from alive_progress import alive_bar
 import requests as rq
 from bs4 import BeautifulSoup as bs
 
+# TODO
+# Currently just grabs the most recent dated results, checks if they already exist, and downloads them if not
+# Need to expand to use all of the data
+
 # POA
 # We need to cache all the documents ready for analysis and to hopefully not annoy the commons
+
+# CWD prepension
+CWD = os.path.dirname(os.path.realpath(__file__)) + "/"
+print("Working In {}".format(CWD))
 
 regAddr = "https://publications.parliament.uk/pa/cm/cmregmem/"
 rootAddr = """https://www.parliament.uk/mps-lords-and-offices/standards-and-financial-interests/parliamentary-commissioner-for-standards/""" \
@@ -34,7 +42,11 @@ if not subPage.ok:
 pageSoup = bs(subPage.content, 'html.parser')
 sub = pageSoup.find(id="maincontent")
 table = sub.find_all("table")[0]
-date = str(sub.find_all("p")[3].text).replace(" ","_")
+date = str(sub.find_all("p")[3].text)
+date = date.replace(" ","_")
+date = date.replace("'", "")
+date = date.replace("\"", "")
+date = CWD + date
 HTMLVersion = table.find("a")
 
 if not HTMLVersion.text == "HTML version":
@@ -49,8 +61,9 @@ if os.path.isdir(date):
     exit(0)
 else:
     print("Updating logs...")
-    ## clear the folder
-    os.system("rm ./" + date + "/*")
+    ## create the folder
+    print("mkdir " + date)
+    os.system("mkdir " + date)
     
 ## Collect all the HTML documents and save them to the Cache...
 # Pull all the names and links..
