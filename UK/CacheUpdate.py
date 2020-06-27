@@ -4,8 +4,6 @@ from alive_progress import alive_bar
 import requests as rq
 from bs4 import BeautifulSoup as bs
 
-cacheDir = "./Cache/"
-
 # POA
 # We need to cache all the documents ready for analysis and to hopefully not annoy the commons
 
@@ -36,7 +34,7 @@ if not subPage.ok:
 pageSoup = bs(subPage.content, 'html.parser')
 sub = pageSoup.find(id="maincontent")
 table = sub.find_all("table")[0]
-date = str(sub.find_all("p")[3].text)
+date = str(sub.find_all("p")[3].text).replace(" ","_")
 HTMLVersion = table.find("a")
 
 if not HTMLVersion.text == "HTML version":
@@ -46,15 +44,13 @@ HTMLLink = HTMLVersion.get('href')
 subLink = HTMLLink.split("/")[0]
 
 # check if we need to get a new version of the files
-if os.path.isfile(cacheDir + date):
+if os.path.isdir(date):
     print("No Refresh Required, Latest already here...")
     exit(0)
 else:
     print("Updating logs...")
     ## clear the folder
-    os.system("rm ./Cache/*")
-    f = open(cacheDir + date, 'x')
-    f.close()
+    os.system("rm ./" + date + "/*")
     
 ## Collect all the HTML documents and save them to the Cache...
 # Pull all the names and links..
@@ -72,7 +68,7 @@ for p in nameP:
     nameList.append((name, link))
 
 # Create a list file
-f = open(cacheDir + "nameList.txt", 'w')
+f = open(date  + "/nameList.txt", 'w')
 for name in nameList:
     f.write("Name: " + name[0] + " , Link: " + name[1] + "\n")
 f.write("Length: "+ str(len(nameList)))
@@ -85,7 +81,7 @@ with alive_bar(len(nameList), bar = 'smooth') as bar:
         localAddr = regAddr + subLink + "/" + name[1]
         personPage = rq.get(localAddr)
         personSoup = bs(personPage.content, 'html.parser')
-        f = open(cacheDir + name[1], 'w')
+        f = open(date + "/" + name[1], 'w')
         f.writelines(personSoup.text)
         f.close
 
